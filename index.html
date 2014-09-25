@@ -8,11 +8,15 @@
   <body ng-controller="mainCtrl">
     <div class="main-container">
       <h1> DevMountain Chat Room </h1>
-      <form ng-submit="postData()">
+       <input class="form-control text-box filter-input" type="text" ng-model="messageFilter" placeholder="Filter for message">
+       <button ng-show="ascDsc" ng-click="changer()">Ascending</button>
+       <button ng-show="!ascDsc" ng-click="changer()">Descending</button>
+      <form class="clear-fix" ng-submit="postData()">
         <input class="form-control text-box" type="text" ng-model="message" placeholder="Message">
       </form>
-      <div class="messages-container">
-        <p ng-repeat="message in messages"> {{message.text}} </p>
+      <div ng-repeat="thing in messages | filter:{text: messageFilter} | orderBy">
+        <p ng-show="thing.text.length">{{thing.text}}</p>
+        <p class="bottom" ng-show="thing.text.length"><small>Created at: {{thing.createdAt | datetime}}</small></p>
       </div>
     </div>
     <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.19.min.js"></script>

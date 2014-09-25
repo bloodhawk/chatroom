@@ -1,22 +1,37 @@
 var app = angular.module('twitterClone');
 
+angular.module('twitterClone').filter('datetime', function($filter){
+ return function(input){
+  if(input == null){ return ""; } 
+ 
+  var _date = $filter('date')(new Date(input), 'MMM dd yyyy - HH:mm:ss');
+  return _date.toUpperCase();
+ };
+});
+
+
 app.controller('mainCtrl', function($scope, parseService){
-  //In your controller you'll have a getParseData function and a postData function, but should be placed on $scope.
+  $scope.getParseData = function(){
+     var param;
+     param = ($scope.ascDsc) ? '' : '-';
+     parseService.getData(param).then(function(data){
+        $scope.messages = data.data.results;
+     });  
+      
+     
+  };
+  $scope.postData = function(){
+      parseService.postData($scope.message);
+      $scope.message = '';
+  };
 
-  //The getParseData function will call the getData method on the parseService object. You'll then save the result of that request to 
-  //your controllers $scope as messages ($scope.messages)
+  $scope.changer = function(){
+    $scope.ascDsc = !$scope.ascDsc;
+  }
 
+  $scope.ascDsc = false;
 
-
-  //The postData function will take whatever the user typed in (hint: look at the html and see what ng-model correlates to on the input box),
-  //pass that text to the postData method on the parseService object which will then post it to the parse backend.
-
-
-
-
-  //uncomment this code when your getParseData function is finished
-  //This goes and gets new data every second, which mimicking a chat room experience.
-  // setInterval(function(){
-  //   $scope.getParseData();
-  // }, 1000)
-})
+  setInterval(function(){
+    $scope.getParseData();
+  }, 1000);
+});
